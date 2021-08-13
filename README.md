@@ -1,13 +1,14 @@
-FolderMagic
+FolderMagic 1.3
 ----------
 
 简单易用，无需部署的列表程序。
 特性：
 * 无需环境，无需数据库，低内存占用
 * 支持webdav管理
+* 支持完善的文件管理，可新建删除重命名和移动任意文件或文件夹，支持批量操作（移动端）
 * 支持视频在线播放，支持字幕（srt, ass, ssa, vtt等）
-* 支持图片预览，支持常见jpg, gif, png, tif, psd格式预览
-* 支持音频在线播放，支持解析专辑图片和歌手信息
+* 支持图片预览，支持常见jpg, gif, png, tif, psd格式预览，图片画廊带来流畅体验
+* 支持音频在线播放，支持解析专辑图片和歌手信息，目前支持mp3,wav和ogg格式
 * 支持文档在线预览，包括常见各类代码格式，如html, js, css, php, py, pdf等
 * 支持office在线预览
 * 支持共享链接，支持共享链接管理
@@ -34,7 +35,7 @@ FolderMagic
   -auth string
         认证: "用户名:密码" 认证信息用于网页登录和webdav，不设置则无认证，webdav将被禁用
   -bind string
-        监听端口 (默认 ":80")
+        监听端口 (默认 ":80")，以 ip:端口 的格式输入，ip可省略，直接输入 :端口 即可监听所有接口
   -gzip
         使用gzip压缩 (默认 true)
   -nosearch
@@ -45,6 +46,8 @@ FolderMagic
         列表根目录 (默认为当前目录)
   -share int
         默认共享链接有效期，单位分钟 (默认 60)
+  -nothumb
+		关闭内置缩略图生成功能，使用简易画廊，见下文描述 (默认 false)
   -wd string
         用于webdav的认证路径, 不可使用根目录 (默认 "/manager")
 ```
@@ -57,11 +60,26 @@ FolderMagic
 ### 文件浏览
 ![image](https://github.com/FolderMagic/FolderMagic/blob/master/thumbnails/browse.png)
 
+### 文件移动
+![image](https://github.com/FolderMagic/FolderMagic/blob/master/thumbnails/filemove.png)
+
+### 画廊
+![image](https://github.com/FolderMagic/FolderMagic/blob/master/thumbnails/gallery.png)
+
+### 简易画廊
+![image](https://github.com/FolderMagic/FolderMagic/blob/master/thumbnails/simplegallery.png)
+
 ### 字幕支持
 ![image](https://github.com/FolderMagic/FolderMagic/blob/master/thumbnails/subtitle.png)
 
 ### 文件搜索
 ![image](https://github.com/FolderMagic/FolderMagic/blob/master/thumbnails/search.png)
+
+### 移动端优化
+![image](https://github.com/FolderMagic/FolderMagic/blob/master/thumbnails/mobile1.png)
+
+### 共享管理
+![image](https://github.com/FolderMagic/FolderMagic/blob/master/thumbnails/shareman.png)
 
 ## webdav 使用
 
@@ -69,11 +87,15 @@ FolderMagic
 
 使用raidrive或其他webdav兼容客户端连接 http://your.domain:port/manager 输入用户名和密码即可连接。
 
+由于webdav本身协议的限制，webdav下不能对文件名为乱码的文件和文件夹进行操作，请在网页端进行重命名。
+
 /manager 可使用 `-wd` 指令更改
 
 ## 文件管理
 
 在网页列表界面右键即可操作文件和文件夹，可以新建和删除。
+
+支持新建文件夹、删除文件和文件夹、重命名及移动文件。**网页端支持非标准文件名操作（如乱码的文件名）**
 
 不使用认证时只能下载文件，不能进行其他操作
 
@@ -106,6 +128,9 @@ IE9 及以下浏览器由于浏览器限制无法上传。
 支持各种常见图片预览，图片将自动生成合适缩略图并使用webp格式（如果浏览器支持）传输
 
 支持psd格式预览，gif格式生成缩略图后没有动画。
+
+默认使用服务端生成图片缩略图，浏览大图也同样流畅，节省流量。若服务端性能较弱或内存不足，可以使用-nothumb指令关闭缩略图功能。前端将自动使用简化版画廊。
+简化版画廊功能较少，并且客户端直接下载原图浏览。简化版画廊不能预览psd格式。
 
 ## Office预览
 
@@ -140,6 +165,10 @@ IE9 及以下浏览器由于浏览器限制无法上传。
 可以用`-nosearch`指令关闭搜索功能。如果您尝试在例如网络映射文件夹等文件系统上使用FolderMagic，索引可能会变得很慢并占用额外的资源，这时您就可以关闭搜索。
 
 搜索功能关闭后，系统会恢复使用浏览器原生的页面内查找功能。
+
+## 移动端适配
+
+FolderMagic 针对移动端、触摸屏设计了适合对应设备操作的界面。只要在文件列表轻轻右划即可进入适合iOS和Android的操作界面，方便的进行上传下载和文件管理。
 
 ## 安全措施
 
@@ -210,3 +239,4 @@ https://example.com, https://www.example.com {
 * IE10及以下符号显示不正常，IE9及以下不能上传文件，切换文件夹将丢失当前正在预览的图像或音视频
 * **360浏览器** 由于奇葩的设计，极速模式下所有文件拖放上传功能都不可用，只能在兼容模式下的IE内核才能上传
 * 和部分拖放打开的插件有冲突，会出现有时能拖放有时不能，或者拖放时页面闪烁等情况，只能对本列表页面禁用插件解决。
+* iOS Chrome存在一些特有问题，播放动画等会出现不流畅的情况，其他浏览器无问题，应为Chrome的自有代码缺陷。
