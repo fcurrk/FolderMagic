@@ -4,18 +4,19 @@ FolderMagic 1.3
 简单易用，无需部署的列表程序。
 特性：
 * 无需环境，无需数据库，低内存占用
-* 支持webdav管理
+* 支持webdav管理，支持显示剩余空间
 * 支持完善的文件管理，可新建删除重命名和移动任意文件或文件夹，支持批量操作（移动端）
-* 支持视频在线播放，支持字幕（srt, ass, ssa, vtt等）
+* 支持视频在线播放，支持字幕（srt, ass, ssa, vtt等），支持倍速播放
 * 支持图片预览，支持常见jpg, gif, png, tif, psd格式预览，图片画廊带来流畅体验
 * 支持音频在线播放，支持解析专辑图片和歌手信息，目前支持mp3,wav和ogg格式
-* 支持文档在线预览，包括常见各类代码格式，如html, js, css, php, py, pdf等
+* 支持文档在线预览，包括常见各类代码格式，如html, js, css, php, py, pdf等， **文件编码自动识别**
 * 支持office在线预览
 * 支持共享链接，支持共享链接管理
 * 集成aria2ng，并安全的指向内部转发地址
 * 文件搜索，即时搜索整个列表文件夹
 * 中英多语言支持
 * 支持常用文件管理，文件一拖即传
+* 自定义登录背景支持
 * 支持主流浏览器，完整支持IE11，部分支持IE10和IE9
 * 响应式布局，适配移动浏览器，适配黑暗模式
 
@@ -30,27 +31,33 @@ FolderMagic 1.3
 
 ### 命令行参数
 ```
-  -aria string
-        Aria2 RPC地址 (默认 "http://127.0.0.1:6800/jsonrpc")，列表程序将安全的转发这个地址
-  -auth string
-        认证: "用户名:密码" 认证信息用于网页登录和webdav，不设置则无认证，webdav将被禁用
-  -bind string
-        监听端口 (默认 ":80")，以 ip:端口 的格式输入，ip可省略，直接输入 :端口 即可监听所有接口
-  -gzip
-        使用gzip压缩 (默认 true)
-  -nosearch
-        关闭内置搜索功能
-  -page404 string
-        自定义404页面
-  -root string
-        列表根目录 (默认为当前目录)
-  -share int
-        默认共享链接有效期，单位分钟 (默认 60)
-  -nothumb
-		关闭内置缩略图生成功能，使用简易画廊，见下文描述 (默认 false)
-  -wd string
-        用于webdav的认证路径, 不可使用根目录 (默认 "/manager")
+  -b, --bind=     监听端口，格式为 IP:PORT 或 :PORT，请注意冒号不能省略 (default: :80)
+  
+  -r, --root=     列表根目录，默认为当前目录
+  
+      --gzip=     启用gzip压缩 (default: true)
+	  
+  -a, --auth=     认证信息，格式： "用户名:密码" 认证信息用于网页登录和webdav，不设置则无认证，webdav将被禁用
+  
+  -w, --webdav=   webdav认证路径，需在webdav客户端中输入 (default: /manager)
+  
+      --page404=  自定义404页面
+	  
+      --nosearch  关闭内置搜索功能
+	  
+      --nothumb   关闭内置缩略图生成功能，使用简易画廊，见下文描述 (默认 false)
+	  
+      --bg=       自定义登录背景。可以是文件或文件夹。文件夹及所有子文件夹下的所有.jpg、.jpeg文件都将被扫描并用作登录背景。文件夹的内容不会被实时检测，所以启动程序后再添加新文件是无效的。使用自定义背景将完全屏蔽官方自带的背景图。
+	  
+  -s, --share=    默认共享链接有效期，单位分钟 (default: 60)
+  
+      --aria=     Aria2 RPC地址 (默认 "http://127.0.0.1:6800/jsonrpc")，列表程序将安全的转发这个地址
+	  
+  -d, --daemon    以后台服务方式运行，无需nohup或screen。不支持Windows。
+  
+      --pid=      后台运行时的pid文件，不支持Windows (default: /var/run/fm.pid)
 ```
+说明：使用Windows时，参数需使用空格隔开，如 -r c:\temp，使用Linux时，参数可使用空格或=隔开。-d，--nothumb等指令不需要参数可直接使用。
 
 ## 缩略图
 
@@ -83,13 +90,13 @@ FolderMagic 1.3
 
 ## webdav 使用
 
-使用命令行 `-auth user:password` 启用鉴权后webdav即自动启用。
+使用命令行 `--auth user:password` 启用鉴权后webdav即自动启用。
 
 使用raidrive或其他webdav兼容客户端连接 http://your.domain:port/manager 输入用户名和密码即可连接。
 
 由于webdav本身协议的限制，webdav下不能对文件名为乱码的文件和文件夹进行操作，请在网页端进行重命名。
 
-/manager 可使用 `-wd` 指令更改
+/manager 可使用 `-w`或`--webdav` 指令更改
 
 ## 文件管理
 
@@ -98,6 +105,14 @@ FolderMagic 1.3
 支持新建文件夹、删除文件和文件夹、重命名及移动文件。**网页端支持非标准文件名操作（如乱码的文件名）**
 
 不使用认证时只能下载文件，不能进行其他操作
+
+## 自定义登录背景
+
+使用 `--bg` 指令可以在登录页面使用自己的背景图，数量不限。--bg后可以跟随图片的地址，也可以跟随文件夹路径（不支持url远程加载）对于文件夹，所有子文件夹内的文件也将被一并扫描使用。
+
+只能使用.jpg和.jpeg文件，暂不支持其他格式的背景图。大小不限，数量不限，尺寸不限。背景图不会被预缩放也不会预加载到内存，所以不用担心内存占用。
+
+文件夹或文件没有实时重载功能，所以请在启动FolderMagic就保存好所有的背景图。中途添加的图片不会生效。
 
 ## 文件上传
 
@@ -140,7 +155,7 @@ IE9 及以下浏览器由于浏览器限制无法上传。
 
 ## 共享管理
 
-通过右键复制的临时链接自动拥有一定时间的有效期（默认60分钟，可通过`-share`指令更改），到期后无法被下载。
+通过右键复制的临时链接自动拥有一定时间的有效期（默认60分钟，可通过`--share`指令更改），到期后无法被下载。
 
 在右下角菜单中选择共享管理即可添加或减少共享时间，也可删除共享
 
@@ -150,7 +165,7 @@ IE9 及以下浏览器由于浏览器限制无法上传。
 
 ## AriaNG
 
-通过右下角菜单可以调用内置的ariaNg，并默认指向/jsonrpc路径。FolderMagic将默认转发/jsonrpc到`http://127.0.0.1:6800/jsonrpc` （aria2 rpc默认路径），可通过`-aria` 指令更改转发地址
+通过右下角菜单可以调用内置的ariaNg，并默认指向/jsonrpc路径。FolderMagic将默认转发/jsonrpc到`http://127.0.0.1:6800/jsonrpc` （aria2 rpc默认路径），可通过`--aria` 指令更改转发地址
 
 /jsonrpc 需要被认证后才能访问（如果启用了认证的话），所以该转发是安全的，即便没有密码，其他人也无法连接到你的aria2rpc
 
@@ -162,7 +177,7 @@ IE9 及以下浏览器由于浏览器限制无法上传。
 
 索引文件占用少量内存（约3M/10k文件）。监听文件夹基于inotify，如果存在海量文件夹（如十几万个）则将会占用较多内存，甚至可能用完inotify的所有监听额度，**请不要直接共享根目录。**
 
-可以用`-nosearch`指令关闭搜索功能。如果您尝试在例如网络映射文件夹等文件系统上使用FolderMagic，索引可能会变得很慢并占用额外的资源，这时您就可以关闭搜索。
+可以用`--nosearch`指令关闭搜索功能。如果您尝试在例如网络映射文件夹等文件系统上使用FolderMagic，索引可能会变得很慢并占用额外的资源，这时您就可以关闭搜索。
 
 搜索功能关闭后，系统会恢复使用浏览器原生的页面内查找功能。
 
@@ -179,6 +194,23 @@ FolderMagic 针对移动端、触摸屏设计了适合对应设备操作的界�
 如不使用root，请开放对应用户的chroot权限。无权限时chroot将被禁用，安全性将被降低。
 
 *由于chroot的使用，符号链接文件和符号链接文件夹可能无法使用，因为他们将指向一个完全不同的路径*
+
+## Systemd 启动脚本（感谢qanniu和bbsbbs）
+```
+[Unit]
+Description=FolderMagic
+After=network.target
+
+[Service]
+Type=simple
+Restart=on-failure
+RestartSec=5s
+ExecStart=/指向你的foldermagic的位置 -b :80 -r 共享路径 -a "user:passwd"
+ExecReload=/指向你的foldermagic的位置 reload -b :80 -r 共享路径 -a "user:passwd"
+
+[Install]
+WantedBy=multi-user.target
+```
 
 ## https
 
@@ -206,6 +238,8 @@ server {
 
 		location / {
 			proxy_buffering off;
+			proxy_cache off;
+			proxy_set_header X-Forwarded-Proto $scheme;
 			# 一定要加，否则FolderMagic在反代后不能识别客户ip，直接封锁全部用户
 			proxy_set_header X-Real-IP $remote_addr;
 			proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
